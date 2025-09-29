@@ -1,0 +1,177 @@
+\documentclass[12pt]{ctexart} 
+\usepackage{array}
+\usepackage{geometry}  
+\usepackage{graphicx}  
+\usepackage{amsmath, amssymb}  
+\usepackage{booktabs}  
+\usepackage{enumerate} 
+\usepackage{verbatim}
+\usepackage{url}
+\usepackage{fancyhdr}  % 引入 fancyhdr 包
+\pagestyle{fancy}  % 使用 fancy 页眉页脚样式
+\fancyhf{}  % 清空默认的页眉页脚
+\fancyfoot[C]{\thepage}  % 在底部中央显示页码
+\renewcommand{\headrulewidth}{0pt}  % 去掉页眉的横线
+%\pagestyle{empty}  % 去掉页眉和页脚的页码
+% 页面设置  
+\geometry{a4paper, margin=2.5cm}  
+\setlength{\parindent}{2em} % 2em 相当于两个字符的宽度
+
+%\title{基于收益最大化的种植策略探究}  
+%\author{张文瑞、陈名湛、王晨屹}  
+%\date{\today}  
+
+
+\begin{document}
+	\section*{警员部署}
+	
+	\begin{center}
+		\Large\textbf{摘要}
+	\end{center}
+	
+	\newpage
+	
+	\section{问题重述与问题分析}
+	
+	\subsection{问题重述}
+	
+	随着社会治安形势和公共安全需求的不断发展，派出所的工作任务愈加复杂多样。为了合理配置警力资源，提高治安防控与案件办理效率，公安机关需要对派出所警员及其负责人（治安所长）的工作绩效进行科学考核，并在此基础上提出合理的人员配置方案。题目给出了三个主要的数据来源：
+	
+	\begin{itemize}
+		\item \textbf{治安所长业务绩效数据}：包含不同季度、不同派出所负责人在各类业务指标上的完成情况；
+		\item \textbf{派出所基本情况数据}：包括辖区人口、面积、行业场所数量、治安案件、刑事案件等统计信息；
+		\item \textbf{警员处理事件平均时间调查数据}：反映一线民警在不同类型警情下的处置耗时。
+	\end{itemize}
+	
+	在此背景下，赛题提出两个核心问题：
+	\begin{enumerate}
+		\item 如何基于绩效数据建立科学、公平的治安所长考核模型，并根据不同奖励方式（取前五名不排序、取前三名排序）给出合理的入选名单或排名；
+		\item 如何建立警力需求与供给的量化模型，判定现有警力配置的合理性，并在新增 $7$ 名警员的前提下，提出最优的分配方案，使警力资源与辖区治安任务相匹配。
+	\end{enumerate}
+	
+	\subsection{问题分析}
+	
+	\subsubsection{绩效考核的复杂性}
+	\begin{itemize}
+		\item 指标维度多样，既包括案件办理数量、社区警务工作，也涉及治安巡逻、群众满意度等。不同指标的量纲与方向性差异较大，需进行正向化与标准化处理；
+		\item 传统单一排序方法易受个别指标波动或异常值影响，为保证结果稳健，需要采用多方法综合评价（如熵权--TOPSIS、VIKOR、DEA 等），并通过秩合成避免偏差；
+		\item 奖励规则差异带来排序方式不同：前五名只需选出入选对象，强调“稳定性”；前三名需给出名次，要求方法具有较强区分度。
+	\end{itemize}
+	
+	\subsubsection{警力配置的合理性判别}
+	\begin{itemize}
+		\item 派出所工作负荷主要来源于 \textbf{警情响应任务} 与 \textbf{社区基础治理任务}。前者与警情发生率及处置时长相关，后者与辖区人口、行业场所数量、面积等因素相关；
+		\item 警员有效工时受休假、培训、非外勤工作等限制，需要换算成可用于接处警的“有效人力”；
+		\item 景区型派出所任务特点特殊，常住人口有限但游客流量大，若直接以人口作为指标可能导致低估其警力需求，需要单独建模修正。
+	\end{itemize}
+	
+	\subsubsection{新增警员的最优分配问题}
+	\begin{itemize}
+		\item 本质是一个 \textbf{离散优化问题}：在多个派出所之间分配有限的新增警力，以最小化整体缺编缺口或最大化治安绩效改进；
+		\item 需考虑多因素权重：缺编严重程度、负责人绩效水平、辖区治安复杂度、特殊任务需求（如景区、重点行业场所）；
+		\item 可建模为 \textbf{整数规划问题} 或采用 \textbf{贪心启发式方法}，确保结果既合理又具解释性。
+	\end{itemize}
+	
+	综上，本题的建模核心在于：通过 \textbf{科学的多指标评价方法} 建立治安所长绩效考核模型，结合 \textbf{工作量估算与优化分配方法} 提出警力配置方案，实现考核公平性与资源配置合理性的统一。
+	
+	\section{模型假设}
+	
+	\section{符号说明}
+	
+	\section{问题一求解}
+	\subsection{数据预处理}
+
+	通过对附件一数据的观察可以发现，每个季度所参评的领导人选并不完全一致，且部分季度存在未分管的情况；同时，各季度评分的最高分总和存在差异，部分指标还包含扣分项。为保证数据处理的一致性，我们作如下处理：\textbf{(1) 对于未分管情况}，该项分值直接记为 $0$；\textbf{(2) 对于各季度最高分总和不一致}，采用量纲统一方法，将每季度的最高分总和归一化为 $25$；\textbf{(3) 对于扣分项}，进行反向处理：若出现扣分则记为 $0$，若未扣分则在原始得分基础上加上对应扣分值。
+	
+	\subsection{改进的绩效考评模型：动态加权整合方法}
+	
+	为解决不同季度考评数据存在的工作类型差异、季节性差异及人员调动问题，我们在原有绩效模型基础上进行了改进，构建了一个三层加权的动态整合方法。该方法包括：季度内指标分类加权、季度间动态加权、以及在岗时间补偿机制。整体框架如图所示（略）。
+	
+	\subsubsection{季度内指标分类加权（解决工作类型差异）}
+	
+	根据公安工作实际情况，将每季度的考评指标重新映射到四类工作类型：
+	\begin{itemize}
+		\item 社区基础工作（权重 $W_1=0.30$）；
+		\item 办案打击工作（权重 $W_2=0.30$）；
+		\item 巡逻处警工作（权重 $W_3=0.25$）；
+		\item 勤务工作（权重 $W_4=0.15$）。
+	\end{itemize}
+	
+	对于季度 $q$ 中某位负责人的得分 $P_{jq}$，计算公式为：
+	\begin{equation}
+		P_{jq} = \sum_{k=1}^{4} \left( W_k \times \frac{\text{实际得分}_{k}}{\text{最高得分}_{k}} \right),
+		\label{eq:p_jq}
+	\end{equation}
+	其中 $k$ 表示工作类别，分母为该类别的最高得分。
+	
+	\subsubsection{季度间动态加权（解决季节性差异）}
+	
+	公安工作具有显著的季节性差异，例如一季度社会面维稳压力较大，三季度案件多发。为体现季节差异，我们引入季度重要性系数 $\lambda_q$：
+	\begin{equation}
+		\lambda_q = \frac{\text{季度 $q$ 指标数}}{\text{年度总指标数}} \times \eta_q,
+		\label{eq:lambda_q}
+	\end{equation}
+	其中，$\eta_q$ 为调整因子，用于刻画公安工作的季节性特征。根据经验设定：
+	\[
+	\eta_1 = 0.9, \quad \eta_2 = 1.0, \quad \eta_3 = 1.1, \quad \eta_4 = 1.0.
+	\]
+	
+	在归一化处理后得到最终季度权重：
+	\[
+	\lambda_1=0.148, \quad \lambda_2=0.312, \quad \lambda_3=0.376, \quad \lambda_4=0.164.
+	\]
+	
+	\subsubsection{在岗时间补偿机制（解决人员调动问题）}
+	
+	针对部分负责人未满四个季度在岗的情况，我们引入有效季度贡献因子，修正年度得分：
+	\begin{equation}
+		P_j^{\text{annual}} = \frac{\sum_{q \in Q_j} \lambda_q P_{jq}}{\sum_{q \in Q_j} \lambda_q}
+		\times \min\left(1, \left(\frac{N_j}{4}\right)^{0.5}\right),
+		\label{eq:annual}
+	\end{equation}
+	其中 $Q_j$ 表示负责人实际在岗季度集合，$N_j$ 表示在岗季度数。该因子能够保证长期在岗人员的考评优势，同时避免因季度数过少导致的不公平。
+	
+	\subsubsection{模型实施效果}
+	
+	通过该改进模型，我们发现：
+	\begin{itemize}
+		\item 办案打击类权重提升后，在案件高发季度表现突出的负责人排名上升；
+		\item 社区工作权重确保了群众满意度导向的体现；
+		\item 季节性调整使得在维稳压力较大的季度（如 Q1）得分更具合理性；
+		\item 在岗时间补偿机制使得短期任职的负责人（如仅在 Q1 参与）得分有所降低，从而提升了考评公平性。
+	\end{itemize}
+	
+	综上，改进的绩效考评模型能够更科学地刻画不同季度、不同工作类型对整体绩效的贡献，并增强了模型对实际公安工作节奏的适应性。
+	
+	\newpage
+	\section{模型的检验}
+	\subsection*{1. 残差P-P图}
+	\subsection*{2. 单样本K-S检验}
+	\subsection*{3. 灵敏度分析}
+	
+	\section{模型的评价与改进}
+	\subsection{模型的优点}
+	\subsection{模型的缺点}
+	\subsection{模型的改进}
+	
+	\newpage
+	\begin{thebibliography}{9}
+		
+	\end{thebibliography}
+	
+	\newpage
+	\section*{附录}
+	\subsection*{附录1 支撑材料}
+	
+	\newpage
+	\section{问题一第一小问代码}
+	
+	\section{问题一第二小问代码}
+	
+	\section{问题二代码}
+	
+	\section{问题三代码}
+	
+	
+	
+\end{document}
